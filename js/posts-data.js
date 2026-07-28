@@ -11,54 +11,14 @@
 
 const POSTS = [
   {
-    id: 'hello-world',
-    title: '你好，世界 — 我的第一篇博客',
+    id: '408-错题本',
+    title: '408 知识点澄清记录',
     date: '2026-07-28',
-    category: '随笔',
-    tags: ['博客', '开始'],
+    category: '考研',
+    tags: ['408', '考研', '计算机组成原理', '数据结构', '操作系统', '计算机网络'],
     cover: '',
-    file: 'posts/hello-world.md',
+    file: 'posts/408错题本.md',
     featured: true
-  },
-  {
-    id: 'markdown-guide',
-    title: 'Markdown 写作完全指南',
-    date: '2026-07-27',
-    category: '教程',
-    tags: ['Markdown', '写作', '教程'],
-    cover: '',
-    file: 'posts/markdown-guide.md',
-    featured: false
-  },
-  {
-    id: 'web-dev-tips',
-    title: '前端开发中那些实用的小技巧',
-    date: '2026-07-25',
-    category: '技术',
-    tags: ['前端', 'JavaScript', 'CSS'],
-    cover: '',
-    file: 'posts/web-dev-tips.md',
-    featured: false
-  },
-  {
-    id: 'reading-notes',
-    title: '读书笔记：如何高效学习',
-    date: '2026-07-22',
-    category: '读书',
-    tags: ['读书', '学习方法'],
-    cover: '',
-    file: 'posts/reading-notes.md',
-    featured: false
-  },
-  {
-    id: 'github-pages-guide',
-    title: '使用 GitHub Pages 搭建免费个人网站',
-    date: '2026-07-20',
-    category: '教程',
-    tags: ['GitHub', '教程', '前端'],
-    cover: '',
-    file: 'posts/github-pages-guide.md',
-    featured: false
   }
 ];
 
