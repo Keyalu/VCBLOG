@@ -17,7 +17,7 @@ const POSTS = [
     category: '考研',
     tags: ['408', '考研', '计算机组成原理', '数据结构', '操作系统', '计算机网络'],
     cover: '',
-    file: 'posts/408错题本.md',
+    file: 'posts/408-errorbook.md',
     featured: true
   }
 ];
