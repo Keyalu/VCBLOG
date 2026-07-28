@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BBLOG - 一个手写的静态个人博客">
+  <meta name="author" content="BBLOG">
+  <meta name="theme-color" content="#4361ee">
+  <meta property="og:title" content="BBLOG">
+  <meta property="og:description" content="用代码书写，以文字记录">
+  <meta property="og:type" content="website">
+  <title>BBLOG - 个人博客</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Icons: Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Code Highlight -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+
+  <!-- Markdown Parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+
+  <!-- Favicon (inline SVG as data URI) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%234361ee'/><text x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold' font-size='18'>B</text></svg>">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Reading Progress Bar -->
+  <div class="reading-progress" id="reading-progress"></div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Command Palette Modal -->
+  <div class="cmd-overlay" id="cmd-overlay" style="display:none">
+    <div class="cmd-palette">
+      <div class="cmd-input-wrap">
+        <i class="ri-search-line"></i>
+        <input class="cmd-input" id="cmd-input" placeholder="搜索文章、页面..." autocomplete="off">
+        <span class="cmd-hint">ESC</span>
+      </div>
+      <div class="cmd-results" id="cmd-results"></div>
+      <div class="cmd-footer">
+        <span>快速导航</span>
+        <div class="cmd-footer-keys">
+          <span class="cmd-footer-key"><kbd>↑↓</kbd> 移动</span>
+          <span class="cmd-footer-key"><kbd>Enter</kbd> 选择</span>
+          <span class="cmd-footer-key"><kbd>ESC</kbd> 关闭</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="main-header">
+    <div class="header-inner">
+      <a class="logo" href="#/" onclick="Router.navigate('/');return false;">
+        <span class="logo-icon">B</span>
+        <span>BBLOG</span>
+      </a>
+
+      <button class="menu-toggle" id="menu-toggle" aria-label="菜单">
+        <i class="ri-menu-line"></i>
+      </button>
+
+      <nav class="nav" id="main-nav">
+        <a class="nav-link active" href="#/"><i class="ri-home-4-line"></i> 首页</a>
+        <a class="nav-link" href="#/archive"><i class="ri-archive-line"></i> 归档</a>
+        <a class="nav-link" href="#/about"><i class="ri-user-smile-line"></i> 关于</a>
+        <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+          <i class="ri-moon-line"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container" id="app-content">
+      <!-- Dynamic content rendered by JS -->
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <span>加载中...</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="#/"><i class="ri-home-4-line"></i> 首页</a>
+        <a href="#/archive"><i class="ri-archive-line"></i> 归档</a>
+        <a href="#/about"><i class="ri-user-smile-line"></i> 关于</a>
+        <a href="https://github.com" target="_blank" rel="noopener"><i class="ri-github-fill"></i> GitHub</a>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 BBLOG &mdash; Built with <i class="ri-heart-fill" style="color:#e63988;font-size:0.8rem"></i> and vanilla code
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="back-to-top" aria-label="回到顶部">
+    <i class="ri-arrow-up-line"></i>
+  </button>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/posts-data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

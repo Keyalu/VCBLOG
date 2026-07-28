@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - BBLOG</title>
+  <script>
+    // GitHub Pages SPA redirect
+    // Works for both root deployment (username.github.io)
+    // and subpath deployment (username.github.io/repo-name)
+    (function() {
+      var path = window.location.pathname;
+      // Only redirect non-asset paths
+      if (path && !path.match(/\.\w+$/)) {
+        // Calculate base path: /repo-name/ when in a subpath repo
+        var segments = path.split('/').filter(Boolean);
+        var basePath = segments.length > 0 ? '/' + segments[0] + '/' : '/';
+        // Build hash route from full path
+        var route = segments.length > 1 ? segments.slice(1).join('/') : '';
+        window.location.replace(basePath + '#/' + route);
+      } else {
+        window.location.replace('#/404');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>
