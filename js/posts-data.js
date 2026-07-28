@@ -12,13 +12,23 @@
 const POSTS = [
   {
     id: '408-errorbook',
-    title: '408错题本',
+    title: '408 知识点澄清记录',
     date: '2026-07-28',
     category: '考研',
     tags: ['408', '考研', '计算机组成原理', '数据结构', '操作系统', '计算机网络'],
     cover: '',
     file: 'posts/408-errorbook.md',
     featured: true
+  },
+  {
+    id: 'math2-tracker',
+    title: '数学二 进度追踪表',
+    date: '2026-07-28',
+    category: '考研',
+    tags: ['数学二', '考研', '张宇', '高等数学', '线性代数'],
+    cover: '',
+    file: 'posts/math2-tracker.md',
+    featured: false
   }
 ];
 
