@@ -903,12 +903,36 @@ const App = {
                 <ul class="toc-list">
                   ${allHeadings.map(h => `
                     <li class="toc-${h.level === '3' ? 'h3' : 'h2'}">
-                      <a href="#${h.id}" data-target="${h.id}">${Utils.escapeHtml(h.text)}</a>
+                      <a href="javascript:void(0)" data-target="${h.id}">${Utils.escapeHtml(h.text)}</a>
                     </li>`).join('')}
                 </ul>` : ''}
             </aside>
           </div>
         `;
+
+        // TOC click → smooth scroll (don't change hash)
+        document.querySelectorAll('#toc-sidebar a[data-target]').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.getElementById(link.dataset.target);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              // Update active state
+              document.querySelectorAll('#toc-sidebar a').forEach(l => l.classList.remove('active'));
+              link.classList.add('active');
+            }
+          });
+        });
+
+        // Heading anchor click → smooth scroll (don't change hash)
+        document.querySelectorAll('#post-content .anchor').forEach(anchor => {
+          anchor.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = anchor.getAttribute('href').slice(1);
+            const target = document.getElementById(id);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
 
         // Highlight code blocks + copy buttons
         document.querySelectorAll('#post-content pre code').forEach(block => {
