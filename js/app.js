@@ -822,166 +822,128 @@ const App = {
   async renderPost(id) {
     this.setActiveNav('');
     this.showLoading();
+    FX.stopParticles();
 
-    try {
-      const post = POSTS.find(p => p.id === id);
-      if (!post) return this.render404();
+    const post = POSTS.find(p => p.id === id);
+    if (!post) return this.render404();
 
-      const data = await this.loadPostContent(post);
-      if (!data) {
-        Toast.error('文章加载失败');
-        return this.render404();
-      }
+    const data = await this.loadPostContent(post);
+    if (!data) return this.render404();
 
-      const readingTime = Utils.readingTime(data.content);
+    const readingTime = Utils.readingTime(data.content);
 
-      // Render markdown
-      const htmlContent = marked.parse(data.content, { breaks: true, gfm: true });
+    // Render markdown to HTML
+    const htmlContent = marked.parse(data.content, { breaks: true, gfm: true });
 
-      // Build TOC from headings via DOM
-      const allHeadings = [];
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = htmlContent;
-      tempDiv.querySelectorAll('h2, h3').forEach(h => {
-        if (!h.id) h.id = Utils.slugify(h.textContent);
-        h.innerHTML = `<a class="anchor" href="#${h.id}">#</a>` + h.innerHTML;
-        allHeadings.push({
-          level: h.tagName[1],
-          id: h.id,
-          text: h.textContent.replace(/^#/, '').trim()
-        });
-      });
-      const finalHtml = tempDiv.innerHTML;
+    // Build TOC from headings
+    const allHeadings = [];
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    tempDiv.querySelectorAll('h2, h3').forEach(h => {
+      if (!h.id) h.id = Utils.slugify(h.textContent);
+      allHeadings.push({ level: h.tagName[1], id: h.id, text: h.textContent.trim() });
+    });
+    const finalHtml = tempDiv.innerHTML;
 
-      // Prev/Next posts
-      const sorted = POSTS.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
-      const idx = sorted.findIndex(p => p.id === id);
-      const prev = idx < sorted.length - 1 ? sorted[idx + 1] : null;
-      const next = idx > 0 ? sorted[idx - 1] : null;
+    // Prev/Next
+    const sorted = POSTS.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+    const idx = sorted.findIndex(p => p.id === id);
+    const prev = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+    const next = idx > 0 ? sorted[idx - 1] : null;
 
-      this.transitionTo(() => {
-        this.contentEl.innerHTML = `
-          <div class="post-layout">
-            <div>
-              <!-- Post Header -->
-              <header class="post-header">
-                <span class="post-header-category">${Utils.escapeHtml(post.category)}</span>
-                <h1 class="post-header-title">${Utils.escapeHtml(post.title)}</h1>
-                <div class="post-header-meta">
-                  <span><i class="ri-calendar-line"></i> ${Utils.formatDate(post.date)}</span>
-                  <span><i class="ri-time-line"></i> ${readingTime} 分钟阅读</span>
-                  <span><i class="ri-eye-line"></i> ${Utils.relativeTime(post.date)}</span>
-                </div>
-                ${post.tags.length ? `
-                  <div class="post-header-tags">
-                    ${post.tags.map(t => `<span class="post-header-tag"><i class="ri-hashtag" style="font-size:0.7rem"></i> ${Utils.escapeHtml(t)}</span>`).join('')}
-                  </div>` : ''}
-              </header>
-
-              <!-- Post Content -->
-              <article class="post-content" id="post-content">${finalHtml}</article>
-
-              <!-- Prev/Next -->
-              <nav class="post-nav">
-                ${prev ? `
-                  <div class="post-nav-item prev" onclick="Router.navigate('/post/${prev.id}')">
-                    <div class="post-nav-label"><i class="ri-arrow-left-s-line"></i> 上一篇</div>
-                    <div class="post-nav-title">${Utils.escapeHtml(prev.title)}</div>
-                  </div>` : '<div></div>'}
-                ${next ? `
-                  <div class="post-nav-item next" onclick="Router.navigate('/post/${next.id}')">
-                    <div class="post-nav-label">下一篇 <i class="ri-arrow-right-s-line"></i></div>
-                    <div class="post-nav-title">${Utils.escapeHtml(next.title)}</div>
-                  </div>` : '<div></div>'}
-              </nav>
+    // Render directly — no async wrapper
+    this.contentEl.innerHTML = `
+      <div class="post-layout page-transition">
+        <div>
+          <header class="post-header">
+            <span class="post-header-category">${Utils.escapeHtml(post.category)}</span>
+            <h1 class="post-header-title">${Utils.escapeHtml(post.title)}</h1>
+            <div class="post-header-meta">
+              <span><i class="ri-calendar-line"></i> ${Utils.formatDate(post.date)}</span>
+              <span><i class="ri-time-line"></i> ${readingTime} 分钟阅读</span>
+              <span><i class="ri-eye-line"></i> ${Utils.relativeTime(post.date)}</span>
             </div>
+            ${post.tags.length ? `
+              <div class="post-header-tags">
+                ${post.tags.map(t => `<span class="post-header-tag"><i class="ri-hashtag" style="font-size:0.7rem"></i> ${Utils.escapeHtml(t)}</span>`).join('')}
+              </div>` : ''}
+          </header>
 
-            <!-- TOC Sidebar -->
-            <aside class="toc-sidebar" id="toc-sidebar">
-              ${allHeadings.length > 0 ? `
-                <div class="toc-title">目录</div>
-                <ul class="toc-list">
-                  ${allHeadings.map(h => `
-                    <li class="toc-${h.level === '3' ? 'h3' : 'h2'}">
-                      <a href="javascript:void(0)" data-target="${h.id}">${Utils.escapeHtml(h.text)}</a>
-                    </li>`).join('')}
-                </ul>` : ''}
-            </aside>
-          </div>
-        `;
+          <article class="post-content" id="post-content">${finalHtml}</article>
 
-        // TOC click → smooth scroll (don't change hash)
-        document.querySelectorAll('#toc-sidebar a[data-target]').forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const target = document.getElementById(link.dataset.target);
-            if (target) {
-              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              // Update active state
-              document.querySelectorAll('#toc-sidebar a').forEach(l => l.classList.remove('active'));
-              link.classList.add('active');
-            }
-          });
-        });
+          <nav class="post-nav">
+            ${prev ? `
+              <div class="post-nav-item prev" onclick="Router.navigate('/post/${prev.id}')">
+                <div class="post-nav-label"><i class="ri-arrow-left-s-line"></i> 上一篇</div>
+                <div class="post-nav-title">${Utils.escapeHtml(prev.title)}</div>
+              </div>` : '<div></div>'}
+            ${next ? `
+              <div class="post-nav-item next" onclick="Router.navigate('/post/${next.id}')">
+                <div class="post-nav-label">下一篇 <i class="ri-arrow-right-s-line"></i></div>
+                <div class="post-nav-title">${Utils.escapeHtml(next.title)}</div>
+              </div>` : '<div></div>'}
+          </nav>
+        </div>
 
-        // Heading anchor click → smooth scroll (don't change hash)
-        document.querySelectorAll('#post-content .anchor').forEach(anchor => {
-          anchor.addEventListener('click', (e) => {
-            e.preventDefault();
-            const id = anchor.getAttribute('href').slice(1);
-            const target = document.getElementById(id);
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          });
-        });
+        <aside class="toc-sidebar" id="toc-sidebar">
+          ${allHeadings.length > 0 ? `
+            <div class="toc-title">目录</div>
+            <ul class="toc-list">
+              ${allHeadings.map(h => `
+                <li class="toc-${h.level === '3' ? 'h3' : 'h2'}">
+                  <a href="javascript:void(0)" data-id="${h.id}">${Utils.escapeHtml(h.text)}</a>
+                </li>`).join('')}
+            </ul>` : ''}
+        </aside>
+      </div>
+    `;
 
-        // Highlight code blocks + copy buttons
-        document.querySelectorAll('#post-content pre code').forEach(block => {
-          hljs.highlightElement(block);
-
-          const btn = document.createElement('button');
-          btn.className = 'code-copy-btn';
-          btn.textContent = '复制';
-          btn.addEventListener('click', async () => {
-            await Utils.copyToClipboard(block.textContent);
-            btn.textContent = '已复制!';
-            btn.style.background = 'rgba(46,196,182,0.3)';
-            Toast.success('代码已复制到剪贴板');
-            setTimeout(() => {
-              btn.textContent = '复制';
-              btn.style.background = '';
-            }, 2000);
-          });
-          block.parentElement.style.position = 'relative';
-          block.parentElement.appendChild(btn);
-        });
-
-        // TOC scroll spy
-        this.initTocSpy(allHeadings);
-
-        // Scroll to top
-        window.scrollTo({ top: 0 });
+    // TOC click → smooth scroll
+    document.querySelectorAll('#toc-sidebar a[data-id]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const target = document.getElementById(link.dataset.id);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.querySelectorAll('#toc-sidebar a').forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        }
+        return false;
       });
-    } catch (err) {
-      console.error('renderPost error:', err);
-      this.contentEl.innerHTML = `
-        <div class="page-404">
-          <div class="page-404-code">⚠️</div>
-          <p class="page-404-text">文章加载失败：${Utils.escapeHtml(err.message)}</p>
-          <a href="#/" class="btn"><i class="ri-home-line"></i> 回到首页</a>
-        </div>`;
-    }
+    });
+
+    // Code highlight + copy
+    document.querySelectorAll('#post-content pre code').forEach(block => {
+      hljs.highlightElement(block);
+      const btn = document.createElement('button');
+      btn.className = 'code-copy-btn';
+      btn.textContent = '复制';
+      btn.addEventListener('click', async () => {
+        await Utils.copyToClipboard(block.textContent);
+        btn.textContent = '已复制!';
+        Toast.success('代码已复制');
+        setTimeout(() => btn.textContent = '复制', 2000);
+      });
+      block.parentElement.style.position = 'relative';
+      block.parentElement.appendChild(btn);
+    });
+
+    // TOC scroll spy
+    this.initTocSpy(allHeadings);
+    window.scrollTo({ top: 0 });
   },
 
   initTocSpy(headings) {
     if (!headings.length) return;
-    const tocLinks = document.querySelectorAll('#toc-sidebar a');
+    const tocLinks = document.querySelectorAll('#toc-sidebar a[data-id]');
     if (!tocLinks.length) return;
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           tocLinks.forEach(l => l.classList.remove('active'));
-          const active = document.querySelector(`#toc-sidebar a[data-target="${entry.target.id}"]`);
+          const active = document.querySelector(`#toc-sidebar a[data-id="${entry.target.id}"]`);
           if (active) active.classList.add('active');
         }
       });
