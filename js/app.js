@@ -1053,23 +1053,27 @@ const App = {
 //  Boot
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Configure marked
-  marked.setOptions({
-    breaks: true,
-    gfm: true,
-    headerIds: true,
-    mangle: false,
-    headerPrefix: ''
-  });
+  try {
+    marked.setOptions({ breaks: true, gfm: true, mangle: false });
 
-  const renderer = new marked.Renderer();
-  renderer.heading = function (tokenOrText, level) {
-    const text = typeof tokenOrText === 'object' ? tokenOrText.text : tokenOrText;
-    const depth = typeof tokenOrText === 'object' ? tokenOrText.depth : level;
-    const slug = Utils.slugify(text);
-    return `<h${depth} id="${slug}">${text}</h${depth}>`;
-  };
-  marked.setOptions({ renderer });
+    const renderer = new marked.Renderer();
+    renderer.heading = function (tokenOrText, level) {
+      try {
+        const text = typeof tokenOrText === 'object' ? tokenOrText.text : tokenOrText;
+        const depth = typeof tokenOrText === 'object' ? tokenOrText.depth : level;
+        const slug = Utils.slugify(text);
+        return '<h' + depth + ' id="' + slug + '">' + text + '</h' + depth + '>';
+      } catch (e) {
+        return '<h2>' + String(tokenOrText) + '</h2>';
+      }
+    };
+    marked.use({ renderer });
 
-  App.init();
+    App.init();
+    console.log('[BBLOG] OK');
+  } catch (err) {
+    console.error('[BBLOG] Init error:', err);
+    var el = document.getElementById('app-content');
+    if (el) el.innerHTML = '<div style="text-align:center;padding:80px"><h2>⚠️ ' + err.message + '</h2><p>按 F12 查看 Console</p></div>';
+  }
 });

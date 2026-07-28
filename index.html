@@ -24,7 +24,7 @@
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 
   <!-- Markdown Parser -->
-  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
   <!-- Favicon (inline SVG as data URI) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%234361ee'/><text x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold' font-size='18'>B</text></svg>">
@@ -92,6 +92,16 @@
       </div>
     </div>
   </main>
+
+  <!-- Fallback if JS fails to load -->
+  <script>
+    setTimeout(function() {
+      var el = document.getElementById('app-content');
+      if (el && el.querySelector('.loading')) {
+        el.innerHTML = '<div style="text-align:center;padding:80px 24px"><h2 style="color:var(--accent)">⚠️ 页面加载异常</h2><p style="color:#888;margin:12px 0">JavaScript 可能未正确加载，请尝试：</p><ol style="text-align:left;display:inline-block;color:#666"><li>按 Ctrl+Shift+R 强制刷新</li><li>检查网络连接</li><li>按 F12 查看 Console 报错</li></ol></div>';
+      }
+    }, 8000);
+  </script>
 
   <!-- Footer -->
   <footer class="footer">
